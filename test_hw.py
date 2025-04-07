@@ -73,7 +73,7 @@ def test_suc_reg():
 
 @pytest.mark.parametrize("payload, expected_error", [
     (unsuc_register(email="eve.holt@reqres.in"), 'Missing password'),
-    (unsuc_register(email=""), 'Missing email or username')  # Update as per the API response
+    (unsuc_register(email=""), 'Missing email or username')
 ])
 def test_unsuc_reg(payload, expected_error):
     response = requests.post(f"{url}/api/register", json=payload)
