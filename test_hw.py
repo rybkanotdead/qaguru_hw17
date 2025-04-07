@@ -6,6 +6,12 @@ from data.user_playloads import create_user_payload, update_user_playload, suc_r
 
 url = 'https://reqres.in'
 
+@pytest.fixture
+def created_user():
+    playload = create_user_payload(name="Test", job="QA")
+    response = requests.post(f"{url}/api/users", json=playload)
+    assert response.status_code == 201
+    return response.json()['id']
 
 def test_get_list_of_users():
     response = requests.get(f"{url}/api/users?page=2")
@@ -51,10 +57,12 @@ def test_update_user():
     assert data['name'] == "Pupkin"
     assert data['job'] == "Mamkin QA"
 
-
-def test_delete_user():
-    response = requests.delete(f"{url}/api/users/2")
+def test_delete_user(created_user):
+    response = requests.delete(f"{url}/api/users/{created_user}")
     assert response.status_code == 204
+    # Проверяем, что пользователь действительно удалён
+    verify_response = requests.get(f"{url}/api/users/{created_user}")
+    assert verify_response.status_code == 404
 
 def test_suc_reg():
     playload = suc_register(email="eve.holt@reqres.in", password="cityslicka")
